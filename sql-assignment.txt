@@ -1,0 +1,207 @@
+ CREATE TABLE SalesPeople( Snum INT PRIMARY KEY,
+    -> Sname VARCHAR(20) UNIQUE,
+    -> City VARCHAR(20),
+    -> Comm INT);
+Query OK, 0 rows affected (1.94 sec)
+
+CREATE TABLE Customers (
+    -> Cnum INT PRIMARY KEY,
+    -> Cname VARCHAR(20),
+    -> City VARCHAR(20) NOT NULL,
+    -> Snum INT ,FOREIGN KEY(Snum) REFERENCES SalesPeople(Snum)
+    -> );
+Query OK, 0 rows affected (2.88 sec)
+
+ CREATE TABLE Orders (
+    -> Onum INT PRIMARY KEY,
+    -> Amt DECIMAL (5,3),
+    -> Odate DATE,
+    -> Cnum INT,
+    -> Snum INT,
+    -> FOREIGN KEY (Cnum) REFERENCES Customers (Cnum),
+    -> FOREIGN KEY (Snum) REFERENCES SalesPeople (Snum)
+    -> );
+Query OK, 0 rows affected (2.38 sec)
+
+INSERT INTO SalesPeople VALUES
+     (1001,'Peel','London',12),
+     (1002,'Serres','Sanjose',13),
+     (1004,'Motika','London',11),
+     (1007,'Rifkin','Barcelona',15),
+     (1003,'Axelrod','Newyork',10);
+
+select * from salespeople;
++------+---------+-----------+------+
+| Snum | Sname   | City      | Comm |
++------+---------+-----------+------+
+| 1001 | Peel    | London    |   12 |
+| 1002 | Serres  | Sanjose   |   13 |
+| 1003 | Axelrod | Newyork   |   10 |
+| 1004 | Motika  | London    |   11 |
+| 1007 | Rifkin  | Barcelona |   15 |
++------+---------+-----------+------+
+5 rows in set (0.12 sec)
+
+
+INSERT INTO CUSTOMERS VALUES 
+	(2001,'Hoffman','London',1001),
+	(2002,'Giovanni','Rome',1003),
+	(2003,'Liu','Sanjose',1002),
+	(2004,'Grass','Berlin',1002),
+	(2006,'Clemens','London',1001),
+	(2008,'Cisneros','Sanjose',1007),
+	(2007,'Pereira','Rome',1004);
+
+ select * from customers;
++------+----------+---------+------+
+| Cnum | Cname    | City    | Snum |
++------+----------+---------+------+
+| 2001 | Hoffman  | London  | 1001 |
+| 2002 | Giovanni | Rome    | 1003 |
+| 2003 | Liu      | Sanjose | 1002 |
+| 2004 | Grass    | Berlin  | 1002 |
+| 2006 | Clemens  | London  | 1001 |
+| 2007 | Pereira  | Rome    | 1004 |
+| 2008 | Cisneros | Sanjose | 1007 |
++------+----------+---------+------+
+7 rows in set (0.00 sec)
+
+
+INSERT INTO ORDERS VALUES
+	(3001,18.69,'1990-10-03',2008,1007),
+	(3003,767.19,'1990-10-03',2001,1001),
+	(3002,1900.10,'1990-10-03',2007,1004),
+	(3005,5160.45,'1990-10-03',2003,1002),
+	(3006,1098.16,'1990-10-03',2008,1007),
+	(3009,1713.23,'1990-10-04',2002,1003),
+	(3007,75.75,'1990-10-04,2004',1002),
+	(3008 ,4273.00,'1990-10-05',2006,1001),
+	(3010,1309.95,'1990-10-06',2004,1002),
+	(3011,9891.88,'1990-10-06',2006,1001);
+
+select * from orders;
++------+------+------------+------+------+
+| Onum | Amt  | Odate      | Cnum | Snum |
++------+------+------------+------+------+
+| 3001 |   19 | 1990-10-03 | 2008 | 1007 |
+| 3002 | 1900 | 1990-10-03 | 2007 | 1004 |
+| 3003 |  767 | 1990-10-03 | 2001 | 1001 |
+| 3005 | 5160 | 1990-10-03 | 2003 | 1002 |
+| 3006 | 1098 | 1990-10-03 | 2008 | 1007 |
+| 3007 |   76 | 1990-10-04 | 2004 | 1002 |
+| 3008 | 4273 | 1990-10-05 | 2006 | 1001 |
+| 3009 | 1713 | 1990-10-04 | 2002 | 1003 |
+| 3010 | 1310 | 1990-10-06 | 2004 | 1002 |
+| 3011 | 9892 | 1990-10-06 | 2006 | 1001 |
++------+------+------------+------+------+
+10 rows in set (0.00 sec)
+
+1.  SELECT COUNT(Sname) FROM SalesPeople WHERE Sname LIKE 'a%';
++--------------+
+| COUNT(Sname) |
++--------------+
+|            1 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(Sname),Sname FROM SalesPeople WHERE Sname LIKE 'a%';
++--------------+---------+
+| COUNT(Sname) | Sname   |
++--------------+---------+
+|            1 | Axelrod |
++--------------+---------+
+1 row in set (0.00 sec)
+
+2.  SELECT Sname FROM SalesPeople S, Orders O WHERE S.Snum=O.Snum AND Amt>2000;
++--------+
+| Sname  |
++--------+
+| Serres |
+| Peel   |
+| Peel   |
++--------+
+3 rows in set (0.06 sec)
+
+
+
+3.  SELECT COUNT(Sname) FROM SalesPeople WHERE City = 'Newyork';
++--------------+
+| COUNT(Sname) |
++--------------+
+|            1 |
++--------------+
+1 row in set (0.02 sec)
+
+mysql> SELECT COUNT(Sname),Sname FROM SalesPeople WHERE City = 'Newyork';
++--------------+---------+
+| COUNT(Sname) | Sname   |
++--------------+---------+
+|            1 | Axelrod |
++--------------+---------+
+1 row in set (0.00 sec)
+
+
+4.  SELECT COUNT(Sname),Sname FROM SalesPeople S JOIN Customers C ON S.Snum=C.Snum    WHERE C.City = 'London' AND 'Paris';
++--------------+-------+
+| COUNT(Sname) | Sname |
++--------------+-------+
+|            0 | NULL  |
++--------------+-------+
+1 row in set, 1 warning (0.06 sec)
+
+mysql> SELECT COUNT(Sname),Sname FROM SalesPeople S JOIN Customers C ON S.Snum=C.Snum    WHERE C.City = 'London' OR 'Paris';
++--------------+-------+
+| COUNT(Sname) | Sname |
++--------------+-------+
+|            2 | Peel  |
++--------------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+5.  SELECT Sname,Onum,Odate FROM SalesPeople S, Orders O WHERE S.Snum=O.Snum;
++---------+------+------------+
+| Sname   | Onum | Odate      |
++---------+------+------------+
+| Axelrod | 3009 | 1990-10-04 |
+| Motika  | 3002 | 1990-10-03 |
+| Peel    | 3003 | 1990-10-03 |
+| Peel    | 3008 | 1990-10-05 |
+| Peel    | 3011 | 1990-10-06 |
+| Rifkin  | 3001 | 1990-10-03 |
+| Rifkin  | 3006 | 1990-10-03 |
+| Serres  | 3005 | 1990-10-03 |
+| Serres  | 3007 | 1990-10-04 |
+| Serres  | 3010 | 1990-10-06 |
++---------+------+------------+
+10 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
